@@ -24,8 +24,6 @@ class LinkSimulatorServiceTest {
     void setUp() {
         // Set up test configuration
         ReflectionTestUtils.setField(linkSimulatorService, "linkSimulatorCommand", "test-command");
-        ReflectionTestUtils.setField(linkSimulatorService, "linkSimulatorUrl", "http://localhost:8082");
-        ReflectionTestUtils.setField(linkSimulatorService, "simulatorMode", "process");
         ReflectionTestUtils.setField(linkSimulatorService, "timeoutMs", 5000);
     }
 
@@ -67,9 +65,7 @@ class LinkSimulatorServiceTest {
 
     @Test
     void testGetCurrentMetrics_ProcessMode() {
-        // Set to process mode
-        ReflectionTestUtils.setField(linkSimulatorService, "simulatorMode", "process");
-
+        // Test process mode (now the only mode)
         Mono<LinkMetrics> result = linkSimulatorService.getCurrentMetrics();
 
         StepVerifier.create(result)
@@ -86,42 +82,9 @@ class LinkSimulatorServiceTest {
                 .verifyComplete();
     }
 
-    @Test
-    void testGetCurrentMetrics_HttpMode() {
-        // Set to HTTP mode
-        ReflectionTestUtils.setField(linkSimulatorService, "simulatorMode", "http");
 
-        Mono<LinkMetrics> result = linkSimulatorService.getCurrentMetrics();
 
-        StepVerifier.create(result)
-                .assertNext(metrics -> {
-                    assertNotNull(metrics);
-                    assertTrue(metrics.getLatencyMs() > 0);
-                    assertTrue(metrics.getJitterMs() >= 0);
-                    assertTrue(metrics.getSignalStrengthDb() < 0);
-                    assertTrue(metrics.getPacketLossRate() >= 0);
-                    assertTrue(metrics.getBandwidthMbps() > 0);
-                    assertTrue(metrics.getSnrDb() < 0);
-                    assertTrue(metrics.getTimestamp() > 0);
-                })
-                .verifyComplete();
-    }
 
-    @Test
-    void testGetCurrentMetrics_InvalidMode() {
-        // Set to invalid mode
-        ReflectionTestUtils.setField(linkSimulatorService, "simulatorMode", "invalid");
-
-        Mono<LinkMetrics> result = linkSimulatorService.getCurrentMetrics();
-
-        StepVerifier.create(result)
-                .assertNext(metrics -> {
-                    assertNotNull(metrics);
-                    // Should fall back to mock data
-                    assertTrue(metrics.getLatencyMs() > 0);
-                })
-                .verifyComplete();
-    }
 
     @Test
     void testLinkMetrics_ConstructorAndGetters() {

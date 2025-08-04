@@ -21,10 +21,7 @@ link_metrics_t generate_metrics(void);
 void print_metrics(const link_metrics_t* metrics);
 void export_metrics_json(const link_metrics_t* metrics);
 
-// HTTP server functions
-void send_http_response(int client_socket, int status_code, const char* content_type, const char* body);
-void handle_http_request(int client_socket, const char* request);
-void start_http_server(int port);
+
 
 // Configuration parameters
 extern double base_latency_ms;

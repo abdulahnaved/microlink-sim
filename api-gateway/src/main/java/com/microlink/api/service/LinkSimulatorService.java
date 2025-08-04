@@ -2,11 +2,6 @@ package com.microlink.api.service;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +19,7 @@ public class LinkSimulatorService {
     
     private static final Logger logger = LoggerFactory.getLogger(LinkSimulatorService.class);
     
-    @Value("${link.simulator.url:http://localhost:8082}")
-    private String linkSimulatorUrl;
+
     
     @Value("${link.simulator.command:./link-sim/link_sim.exe}")
     private String linkSimulatorCommand;
@@ -33,17 +27,11 @@ public class LinkSimulatorService {
     @Value("${link.simulator.timeout:5000}")
     private int timeoutMs;
     
-    @Value("${link.simulator.mode:process}")
-    private String simulatorMode; // "process" or "http"
+
     
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final HttpClient httpClient;
-    
     public LinkSimulatorService() {
-        // Initialize HttpClient with a default timeout to avoid PT0S error
-        this.httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofMillis(5000))
-                .build();
+        // Service initialization
     }
     
     /**
@@ -53,11 +41,7 @@ public class LinkSimulatorService {
     public Mono<LinkMetrics> getCurrentMetrics() {
         return Mono.fromCallable(() -> {
             try {
-                if ("http".equals(simulatorMode)) {
-                    return getMetricsViaHttp();
-                } else {
-                    return getMetricsViaProcess();
-                }
+                return getMetricsViaProcess();
             } catch (Exception e) {
                 logger.error("Error getting metrics from simulator: {}", e.getMessage());
                 // Fallback to mock data
@@ -66,29 +50,7 @@ public class LinkSimulatorService {
         });
     }
     
-    /**
-     * Get metrics via HTTP request
-     */
-    private LinkMetrics getMetricsViaHttp() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(linkSimulatorUrl + "/metrics"))
-                .timeout(Duration.ofMillis(timeoutMs))
-                .GET()
-                .build();
-        
-        HttpResponse<String> response = httpClient.send(request, 
-                HttpResponse.BodyHandlers.ofString());
-        
-        if (response.statusCode() != 200) {
-            logger.error("Link simulator returned status code: {}", response.statusCode());
-            throw new RuntimeException("Link simulator failed with status code: " + response.statusCode());
-        }
-        
-        String json = response.body().trim();
-        logger.debug("Received JSON from link simulator: {}", json);
-        
-        return objectMapper.readValue(json, LinkMetrics.class);
-    }
+
     
     /**
      * Get metrics via local process execution
@@ -168,29 +130,14 @@ public class LinkSimulatorService {
      */
     public boolean isSimulatorAvailable() {
         try {
-            if ("http".equals(simulatorMode)) {
-                return isSimulatorAvailableViaHttp();
-            } else {
-                return isSimulatorAvailableViaProcess();
-            }
+            return isSimulatorAvailableViaProcess();
         } catch (Exception e) {
             logger.warn("Link simulator not available: {}", e.getMessage());
             return false;
         }
     }
     
-    private boolean isSimulatorAvailableViaHttp() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(linkSimulatorUrl + "/health"))
-                .timeout(Duration.ofMillis(2000))
-                .GET()
-                .build();
-        
-        HttpResponse<String> response = httpClient.send(request, 
-                HttpResponse.BodyHandlers.ofString());
-        
-        return response.statusCode() == 200;
-    }
+
     
     private boolean isSimulatorAvailableViaProcess() throws Exception {
         ProcessBuilder processBuilder = new ProcessBuilder(linkSimulatorCommand, "--json");

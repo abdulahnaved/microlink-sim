@@ -18,9 +18,7 @@ spring:
 # Link simulator configuration
 link:
   simulator:
-    mode: process  # "process" or "http"
     command: ../link-sim/link_sim.exe  # Path to C simulator executable
-    url: http://localhost:8081    # URL for HTTP mode
     timeout: 5000
 
 # Logging configuration
