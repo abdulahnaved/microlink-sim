@@ -294,5 +294,247 @@ microlink-sim/
 
 This project demonstrates advanced software engineering skills including multi-language development, system integration, web development, and comprehensive testing - perfect for showcasing to potential employers like Mini Link.
 
+---
+
+## 🚀 Contributing & Forking
+
+### How to Fork This Project
+
+1. **Fork on GitHub**: Click the "Fork" button at the top right of this repository
+2. **Clone your fork**:
+   ```bash
+   git clone https://github.com/[your-username]/microlink-sim.git
+   cd microlink-sim
+   ```
+
+### 🛠️ Complete Setup Guide
+
+#### Prerequisites
+
+| Tool | Version | Purpose |
+|------|---------|---------|
+| **Java** | 17+ | API Gateway runtime |
+| **Maven** | 3.6+ | Java build tool |
+| **GCC** | Any recent | C compiler |
+| **Git** | Any recent | Version control |
+
+#### Platform-Specific Setup
+
+<details>
+<summary><b>🪟 Windows Setup</b></summary>
+
+1. **Install Java 17+**:
+   - Download from [Oracle](https://www.oracle.com/java/technologies/downloads/) or [OpenJDK](https://openjdk.org/)
+   - Verify: `java -version`
+
+2. **Install Maven**:
+   - Download from [Apache Maven](https://maven.apache.org/download.cgi)
+   - Add to PATH
+   - Verify: `mvn -version`
+
+3. **Install GCC**:
+   ```powershell
+   # Option 1: Using Chocolatey
+   choco install mingw
+   
+   # Option 2: Install MSYS2 and run:
+   pacman -S gcc
+   ```
+
+4. **Build & Run**:
+   ```powershell
+   # Build C simulator (if make available)
+   cd link-sim
+   make
+   
+   # Or manually:
+   gcc -o link_sim.exe link_sim.c -lm
+   
+   # Build & run Java API
+   cd ../api-gateway
+   mvn clean package
+   java -jar target/api-gateway-1.0.0.jar
+   ```
+
+</details>
+
+<details>
+<summary><b>🐧 Linux Setup</b></summary>
+
+1. **Install Dependencies**:
+   ```bash
+   # Ubuntu/Debian
+   sudo apt update
+   sudo apt install openjdk-17-jdk maven gcc build-essential
+   
+   # CentOS/RHEL/Fedora
+   sudo dnf install java-17-openjdk maven gcc make
+   ```
+
+2. **Build & Run**:
+   ```bash
+   # Build C simulator
+   cd link-sim
+   make
+   
+   # Build & run Java API
+   cd ../api-gateway
+   mvn clean package
+   java -jar target/api-gateway-1.0.0.jar
+   ```
+
+</details>
+
+<details>
+<summary><b>🍎 macOS Setup</b></summary>
+
+1. **Install Dependencies**:
+   ```bash
+   # Using Homebrew
+   brew install openjdk@17 maven gcc
+   
+   # Add Java to PATH
+   echo 'export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"' >> ~/.zshrc
+   ```
+
+2. **Build & Run**:
+   ```bash
+   # Build C simulator
+   cd link-sim
+   make
+   
+   # Build & run Java API
+   cd ../api-gateway
+   mvn clean package
+   java -jar target/api-gateway-1.0.0.jar
+   ```
+
+</details>
+
+#### 🚀 Quick Start (Any Platform)
+
+```bash
+# 1. Clone the project
+git clone https://github.com/abdulahnaved/microlink-sim.git
+cd microlink-sim
+
+# 2. Build everything
+cd link-sim && make && cd ..
+cd api-gateway && mvn clean package
+
+# 3. Run the application
+java -jar target/api-gateway-1.0.0.jar
+
+# 4. Open in browser
+# http://localhost:8081/dashboard
+```
+
+#### 🔧 Development Setup
+
+1. **Set up upstream remote** (to sync with original):
+   ```bash
+   git remote add upstream https://github.com/abdulahnaved/microlink-sim.git
+   ```
+
+2. **Create a feature branch**:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+3. **Make changes and test**:
+   ```bash
+   cd api-gateway
+   mvn test
+   ```
+
+4. **Submit Pull Request**:
+   - Push to your fork
+   - Create PR from your fork to original repository
+
+#### 🆘 Troubleshooting
+
+<details>
+<summary><b>Common Issues & Solutions</b></summary>
+
+**"make: command not found" (Windows)**
+```powershell
+# Install make via chocolatey
+choco install make
+
+# Or compile manually:
+gcc -o link_sim.exe link_sim.c -lm
+```
+
+**"JAVA_HOME not set"**
+```bash
+# Linux/macOS
+export JAVA_HOME=/path/to/java
+echo 'export JAVA_HOME=/path/to/java' >> ~/.bashrc
+
+# Windows
+set JAVA_HOME=C:\Program Files\Java\jdk-17
+```
+
+**"Port 8081 already in use"**
+```bash
+# Change port in api-gateway/src/main/resources/application.yml
+server:
+  port: 8082  # or any available port
+```
+
+**"C simulator not found"**
+- Ensure `link_sim.exe` exists in `link-sim/` directory
+- Check path in `application.yml` is correct
+- Verify executable permissions (Linux/macOS): `chmod +x link_sim.exe`
+
+</details>
+
+#### 📊 Verification Steps
+
+After setup, verify everything works:
+
+1. **Test C Simulator**:
+   ```bash
+   cd link-sim
+   ./link_sim.exe --json
+   # Should output JSON with metrics
+   ```
+
+2. **Test Java API**:
+   ```bash
+   curl http://localhost:8081/api/v1/metrics
+   # Should return JSON response
+   ```
+
+3. **Test Web Dashboard**:
+   - Visit: http://localhost:8081/dashboard
+   - Should show real-time metrics
+
+#### 🤝 Contributing Guidelines
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Ensure all tests pass: `mvn test`
+6. Submit a pull request
+
+#### 📝 What You Can Contribute
+
+- 🐛 **Bug fixes**
+- ✨ **New features** (additional metrics, visualizations)
+- 📚 **Documentation improvements**
+- 🧪 **More test coverage**
+- 🎨 **UI/UX enhancements**
+- 🔧 **Build system improvements**
+
+#### 📋 Project Status
+
+![CI Status](https://github.com/abdulahnaved/microlink-sim/actions/workflows/ci.yml/badge.svg)
+
+- ✅ **Build Status**: Passing
+- ✅ **Tests**: 11 tests, 0 failures
+- ✅ **Cross-Platform**: Windows, Linux, macOS
+- ✅ **Documentation**: Complete setup guide
 
 
