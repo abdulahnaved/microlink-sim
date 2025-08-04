@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microlink Metrics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .nav {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: rgba(255,255,255,0.1);
+            transition: background 0.3s ease;
+        }
+        
+        .nav a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .metrics-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+        
+        .metric-name {
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .metric-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .refresh-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+            margin: 20px 0;
+        }
+        
+        .refresh-btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .last-updated {
+            text-align: center;
+            color: white;
+            margin-top: 20px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📈 Microlink Metrics</h1>
+            <p>Detailed Microwave Link Performance Data</p>
+        </div>
+        
+        <div class="nav">
+            <a href="/">🏠 Home</a>
+            <a href="/dashboard">📊 Dashboard</a>
+            <a href="/health-page">❤️ Health</a>
+        </div>
+        
+        <div class="metrics-container" id="metricsContainer">
+            <!-- Metrics will be loaded here -->
+        </div>
+        
+        <div style="text-align: center;">
+            <button class="refresh-btn" onclick="loadMetrics()">🔄 Refresh Metrics</button>
+        </div>
+        
+        <div class="last-updated" id="lastUpdated">
+            Last updated: <span id="timestamp">Loading...</span>
+        </div>
+    </div>
+    
+    <script>
+        function loadMetrics() {
+            fetch('/api/v1/metrics')
+                .then(response => response.json())
+                .then(data => {
+                    updateMetrics(data);
+                    updateTimestamp();
+                })
+                .catch(error => {
+                    console.error('Error loading metrics:', error);
+                });
+        }
+        
+        function updateMetrics(data) {
+            const container = document.getElementById('metricsContainer');
+            container.innerHTML = `
+                <div class="metric-row">
+                    <span class="metric-name">Latency</span>
+                    <span class="metric-value">${data.latency_ms} ms</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-name">Jitter</span>
+                    <span class="metric-value">${data.jitter_ms} ms</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-name">Signal Strength</span>
+                    <span class="metric-value">${data.signal_strength_db} dB</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-name">Packet Loss Rate</span>
+                    <span class="metric-value">${data.packet_loss_rate} %</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-name">Bandwidth</span>
+                    <span class="metric-value">${data.bandwidth_mbps} Mbps</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-name">Signal-to-Noise Ratio</span>
+                    <span class="metric-value">${data.snr_db} dB</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-name">Timestamp</span>
+                    <span class="metric-value">${new Date(data.timestamp * 1000).toLocaleString()}</span>
+                </div>
+            `;
+        }
+        
+        function updateTimestamp() {
+            const now = new Date();
+            document.getElementById('timestamp').textContent = now.toLocaleString();
+        }
+        
+        // Load metrics on page load
+        loadMetrics();
+        
+        // Auto-refresh every 10 seconds
+        setInterval(loadMetrics, 10000);
+    </script>
+</body>
+</html> 

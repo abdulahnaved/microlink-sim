@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microlink API Gateway</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .card p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .api-info {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .api-info h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .endpoint {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .method {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .get { background: #28a745; color: white; }
+        .post { background: #007bff; color: white; }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: white;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛰️ Microlink API Gateway</h1>
+            <p>Microwave Radio Link Simulation System</p>
+        </div>
+        
+        <div class="cards">
+            <a href="/dashboard" class="card">
+                <h3>📊 Dashboard</h3>
+                <p>Real-time microwave link metrics with beautiful visualizations and live updates.</p>
+            </a>
+            
+            <a href="/metrics-page" class="card">
+                <h3>📈 Metrics</h3>
+                <p>Current microwave link performance data including latency, signal strength, and bandwidth.</p>
+            </a>
+            
+            <a href="/health-page" class="card">
+                <h3>❤️ Health</h3>
+                <p>System health status and operational information for the microwave link simulator.</p>
+            </a>
+            
+
+        </div>
+        
+        <div class="api-info">
+            <h2>🔗 API Endpoints</h2>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <code>/api/v1/metrics</code> - Current microwave link metrics
+            </div>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <code>/api/v1/metrics/health</code> - System health status
+            </div>
+
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <code>/api/v1/metrics</code> - Submit external metrics
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Version 1.0.0 | Microwave Radio Link Simulation System</p>
+        </div>
+    </div>
+</body>
+</html> 

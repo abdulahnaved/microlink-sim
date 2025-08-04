@@ -1,0 +1,97 @@
+# Java
+*.class
+*.jar
+*.war
+*.ear
+*.logs
+*.iml
+.idea/
+.project
+.classpath
+.settings/
+.vscode/
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Spring Boot
+.springBeans
+spring-boot-application.properties
+
+# C/C++
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+*.out
+*.app
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Build directories
+build/
+bin/
+obj/
+Debug/
+Release/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Logs
+*.log
+logs/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Test coverage
+*.gcov
+*.gcda
+*.gcno
+coverage/
+
+# Node.js (if any frontend components are added later)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE files
+*.swp
+*.swo
+*~
+
+# Backup files
+*.bak
+*.backup
