@@ -1,0 +1,157 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    name: Create Release
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          ## Microlink Simulator Release
+          
+          ### Changes
+          - Auto-generated release from tag ${{ github.ref }}
+          
+          ### Components
+          - C Link Simulator: Generates realistic microwave link metrics
+          - Java API Gateway: Spring Boot application with REST API and web dashboard
+          
+          ### Quick Start
+          1. Download the appropriate platform binary
+          2. Extract the files
+          3. Run `java -jar api-gateway-*.jar`
+          4. Access the dashboard at http://localhost:8081/dashboard
+          
+          ### API Endpoints
+          - `GET /api/v1/metrics` - Get current link metrics
+          - `GET /api/v1/metrics/health` - Health check
+          - `GET /dashboard` - Web dashboard
+        draft: false
+        prerelease: false
+
+  build-and-upload:
+    needs: create-release
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            asset_name: microlink-sim-linux
+            c_executable: link_sim.exe
+          - os: windows-latest
+            asset_name: microlink-sim-windows
+            c_executable: link_sim.exe
+          - os: macos-latest
+            asset_name: microlink-sim-macos
+            c_executable: link_sim.exe
+    
+    runs-on: ${{ matrix.os }}
+    name: Build and Upload ${{ matrix.os }}
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install build dependencies (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: sudo apt-get update && sudo apt-get install -y gcc make zip
+    
+    - name: Install build dependencies (macOS)
+      if: matrix.os == 'macos-latest'
+      run: brew install gcc make zip
+    
+    - name: Install build dependencies (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        choco install mingw zip
+        refreshenv
+    
+    - name: Build C simulator
+      run: |
+        cd link-sim
+        make clean || echo "Clean failed, continuing..."
+        make
+    
+    - name: Set up JDK 11
+      uses: actions/setup-java@v4
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+    
+    - name: Build Java application
+      run: |
+        cd api-gateway
+        mvn clean package -DskipTests
+    
+    - name: Create release package
+      run: |
+        mkdir release-package
+        
+        # Copy C simulator
+        cp link-sim/${{ matrix.c_executable }} release-package/
+        
+        # Copy Java JAR
+        cp api-gateway/target/api-gateway-*.jar release-package/
+        
+        # Copy documentation
+        cp README.md release-package/
+        
+        # Create startup script for Unix-like systems
+        if [ "${{ matrix.os }}" != "windows-latest" ]; then
+          cat > release-package/start.sh << 'EOF'
+        #!/bin/bash
+        echo "Starting Microlink Simulator..."
+        echo "C Simulator: $(pwd)/link_sim.exe"
+        echo "Java API: $(pwd)/api-gateway-*.jar"
+        echo ""
+        echo "Starting Java API Gateway on port 8081..."
+        java -jar api-gateway-*.jar
+        EOF
+          chmod +x release-package/start.sh
+        fi
+        
+        # Create startup script for Windows
+        if [ "${{ matrix.os }}" == "windows-latest" ]; then
+          cat > release-package/start.bat << 'EOF'
+        @echo off
+        echo Starting Microlink Simulator...
+        echo C Simulator: %cd%\link_sim.exe
+        echo Java API: %cd%\api-gateway-*.jar
+        echo.
+        echo Starting Java API Gateway on port 8081...
+        java -jar api-gateway-*.jar
+        EOF
+        fi
+    
+    - name: Create ZIP archive
+      run: |
+        cd release-package
+        if [ "${{ matrix.os }}" == "windows-latest" ]; then
+          7z a ../${{ matrix.asset_name }}.zip *
+        else
+          zip -r ../${{ matrix.asset_name }}.zip *
+        fi
+    
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.create-release.outputs.upload_url }}
+        asset_path: ./${{ matrix.asset_name }}.zip
+        asset_name: ${{ matrix.asset_name }}.zip
+        asset_content_type: application/zip
